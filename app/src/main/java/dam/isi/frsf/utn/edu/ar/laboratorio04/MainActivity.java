@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -56,13 +58,14 @@ public class MainActivity extends AppCompatActivity
     public static Usuario usuario;
     private TextView textNombre;
     private TextView textCorreo;
+    private TextView textView_Ringtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        usuario = new Usuario("Android Studio","android.studio@android.com","c:/prueba/a.mp4");
+        usuario = new Usuario("Android Studio","android.studio@android.com",RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -187,7 +190,23 @@ public class MainActivity extends AppCompatActivity
             final View dialoglayout = inflater.inflate(R.layout.configusuario, null);
             final EditText editText_Usuario = (EditText) dialoglayout.findViewById(R.id.editText_Usuario);
             final EditText editText_Correo = (EditText) dialoglayout.findViewById(R.id.editText_Correo);
-            final EditText editText_Ringtone = (EditText) dialoglayout.findViewById(R.id.editText_Ringtone);
+            textView_Ringtone = (TextView) dialoglayout.findViewById(R.id.textView_nombreRingtone);
+            textView_Ringtone.setText("");
+            final Button button_Ringtone = (Button) dialoglayout.findViewById(R.id.button_Ringtone);
+
+            button_Ringtone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Uri currenturi = RingtoneManager.getActualDefaultRingtoneUri(MainActivity.this,RingtoneManager.TYPE_NOTIFICATION);
+                    Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select ringtone for notifications:");
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,RingtoneManager.TYPE_ALARM);
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currenturi);
+                    startActivityForResult( intent, 999);
+                }
+            });
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setView(dialoglayout);
@@ -199,12 +218,12 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(MainActivity.this, "Debe ingresar el nombre de usuario", Toast.LENGTH_SHORT).show();
                     else if(editText_Correo.getText().toString().isEmpty())
                         Toast.makeText(MainActivity.this, "Debe ingresar el correo", Toast.LENGTH_SHORT).show();
-                    else if(editText_Ringtone.getText().toString().isEmpty())
-                        Toast.makeText(MainActivity.this, "Debe ingresar el ringtone", Toast.LENGTH_SHORT).show();
+                    else if(textView_Ringtone.getText().toString().isEmpty())
+                        Toast.makeText(MainActivity.this, "Debe seleccionar un ringtone", Toast.LENGTH_SHORT).show();
                     else{
                         usuario.setNombre(editText_Usuario.getText().toString());
                         usuario.setCorreo(editText_Correo.getText().toString());
-                        usuario.setRingstone(editText_Ringtone.getText().toString());
+                        //usuario.setRingstone(editText_Ringtone.getText().toString());
 
                         textNombre.setText(usuario.getNombre());
                         textCorreo.setText(usuario.getCorreo());
@@ -257,6 +276,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 999 && resultCode == RESULT_OK){
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            usuario.setRingstone(uri);
+            textView_Ringtone.setText(uri.getPath());
+        }
     }
 
 }

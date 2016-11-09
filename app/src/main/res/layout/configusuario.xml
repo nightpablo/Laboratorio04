@@ -66,14 +66,17 @@
                 android:layout_marginTop="10dp"
                 android:id="@+id/textView3" />
 
-            <EditText
-                android:id="@+id/editText_Ringtone"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="39dp"
-                android:gravity="top"
-                android:hint="Escriba su Ringtone"
-                android:inputType="textMultiLine"
-                android:lines="7" />
+                android:layout_height="wrap_content"
+                android:id="@+id/textView_nombreRingtone"
+                android:textColor="@android:color/holo_green_light" />
+
+            <Button
+                android:text="Seleccione un ringtone..."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_Ringtone" />
 
         </LinearLayout>
     </ScrollView>

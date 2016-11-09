@@ -1,5 +1,7 @@
 package dam.isi.frsf.utn.edu.ar.laboratorio04.modelo;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,11 @@ public class Usuario implements Serializable {
 
 
     private String correo;
-    private String Ringstone;
+    private Uri Ringstone;
     private List<Reserva> reservas;
     private Integer puntosSuperPremio;
 
-    public Usuario(String nombre,String correo,String Ringstone){
+    public Usuario(String nombre,String correo,Uri Ringstone){
         this.correo=correo;
         this.nombre = nombre;
         this.Ringstone = Ringstone;
@@ -67,11 +69,11 @@ public class Usuario implements Serializable {
         this.nombre = nombre;
     }
 
-public String getRingstone() {
+public Uri getRingstone() {
         return Ringstone;
     }
 
-    public void setRingstone(String ringstone) {
+    public void setRingstone(Uri ringstone) {
         Ringstone = ringstone;
     }
 }

@@ -74,14 +74,14 @@ public class TestReceiver extends BroadcastReceiver{
         intent.putExtra("listaReservas",(ArrayList<Reserva>) MainActivity.usuario.getReservas());
         intent.putExtra("esReserva",false);
 
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         PendingIntent pi = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context.getApplicationContext())
                 .setContentIntent(pi)
                 .setContentTitle("Notificación de Reservalo.com")
                 .setSmallIcon(android.R.drawable.ic_menu_send)
                 .setContentText(message)
-                .setSound(defaultSound);
+                .setSound(MainActivity.usuario.getRingstone());
         nm.notify(1,mBuilder.build());
 
     }
