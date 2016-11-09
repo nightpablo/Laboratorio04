@@ -1,11 +1,15 @@
 package dam.isi.frsf.utn.edu.ar.laboratorio04;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -49,13 +54,15 @@ public class MainActivity extends AppCompatActivity
     private FormBusqueda frmBusq;
     private Button Configuracion;
     public static Usuario usuario;
+    private TextView textNombre;
+    private TextView textCorreo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        usuario = new Usuario("prueba","Prueba@Prueba.com","c:/prueba/a.mp4");
+        usuario = new Usuario("Android Studio","android.studio@android.com","c:/prueba/a.mp4");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,6 +78,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.getHeaderView(0);
+
+        textNombre = (TextView) headerLayout.findViewById(R.id.textView_NombreUsuario);
+        textCorreo = (TextView) headerLayout.findViewById(R.id.textView_Correo);
+
+        textNombre.setText(usuario.getNombre());
+        textCorreo.setText(usuario.getCorreo());
 
         frmBusq= new FormBusqueda();
         txtHuespedes = (EditText) findViewById(R.id.cantHuespedes);
@@ -91,13 +106,7 @@ public class MainActivity extends AppCompatActivity
 
         btnBuscar = (Button) findViewById(R.id.btnBuscar);
         btnBuscar.setOnClickListener(btnBusarListener);
-        Configuracion = (Button) findViewById(R.id.action_settings);
-        /*Configuracion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });*/
     }
 
     private View.OnClickListener btnBusarListener = new View.OnClickListener() {
@@ -174,6 +183,37 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            LayoutInflater inflater = getLayoutInflater();
+            final View dialoglayout = inflater.inflate(R.layout.configusuario, null);
+            final EditText editText_Usuario = (EditText) dialoglayout.findViewById(R.id.editText_Usuario);
+            final EditText editText_Correo = (EditText) dialoglayout.findViewById(R.id.editText_Correo);
+            final EditText editText_Ringtone = (EditText) dialoglayout.findViewById(R.id.editText_Ringtone);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setView(dialoglayout);
+
+            builder.setPositiveButton("Configurar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(editText_Usuario.getText().toString().isEmpty())
+                        Toast.makeText(MainActivity.this, "Debe ingresar el nombre de usuario", Toast.LENGTH_SHORT).show();
+                    else if(editText_Correo.getText().toString().isEmpty())
+                        Toast.makeText(MainActivity.this, "Debe ingresar el correo", Toast.LENGTH_SHORT).show();
+                    else if(editText_Ringtone.getText().toString().isEmpty())
+                        Toast.makeText(MainActivity.this, "Debe ingresar el ringtone", Toast.LENGTH_SHORT).show();
+                    else{
+                        usuario.setNombre(editText_Usuario.getText().toString());
+                        usuario.setCorreo(editText_Correo.getText().toString());
+                        usuario.setRingstone(editText_Ringtone.getText().toString());
+
+                        textNombre.setText(usuario.getNombre());
+                        textCorreo.setText(usuario.getCorreo());
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancelar",null);
+            builder.show();
+
             return true;
         }
 
@@ -198,22 +238,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_reservas:
 
-                ArrayList<Reserva> todasLasReservasRealizadas = new ArrayList<Reserva>();
-                for(Departamento d: Departamento.getAlojamientosDisponibles())
-                    todasLasReservasRealizadas.addAll(d.getReservas());
-                ArrayList<Reserva> todasLasReservasNoConfirmada = new ArrayList<Reserva>();
-                for(Reserva a: todasLasReservasRealizadas)
-                    if(!a.getConfirmada())
-                        todasLasReservasNoConfirmada.add(a);
-                todasLasReservasRealizadas.removeAll(todasLasReservasNoConfirmada);
-
-                if(todasLasReservasRealizadas.size()==0){
+                if(usuario.getReservas().size()==0){
                     Toast.makeText(MainActivity.this,"No hay reserva",Toast.LENGTH_SHORT).show();
                 }
                 else{
 
                     Intent i4 = new Intent(MainActivity.this,AltaReservaActivity.class);
-                    i4.putExtra("listaReservas",(ArrayList<Reserva>) todasLasReservasRealizadas);
+                    i4.putExtra("listaReservas",(ArrayList<Reserva>) usuario.getReservas());
                     i4.putExtra("esReserva",false);
                     startActivity(i4);
                 }

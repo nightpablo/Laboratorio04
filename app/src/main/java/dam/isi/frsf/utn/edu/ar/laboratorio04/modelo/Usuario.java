@@ -1,6 +1,7 @@
 package dam.isi.frsf.utn.edu.ar.laboratorio04.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,6 +11,9 @@ public class Usuario implements Serializable {
 
     private Integer id;
     private String nombre;
+
+
+
     private String correo;
     private String Ringstone;
     private List<Reserva> reservas;
@@ -19,6 +23,7 @@ public class Usuario implements Serializable {
         this.correo=correo;
         this.nombre = nombre;
         this.Ringstone = Ringstone;
+        reservas = new ArrayList<Reserva>();
     }
 
 
@@ -52,5 +57,21 @@ public class Usuario implements Serializable {
 
     public void setPuntosSuperPremio(Integer puntosSuperPremio) {
         this.puntosSuperPremio = puntosSuperPremio;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+public String getRingstone() {
+        return Ringstone;
+    }
+
+    public void setRingstone(String ringstone) {
+        Ringstone = ringstone;
     }
 }

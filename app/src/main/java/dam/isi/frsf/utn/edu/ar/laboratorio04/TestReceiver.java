@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ public class TestReceiver extends BroadcastReceiver{
             cancelRepeatingAlarm(context);
             AltaReservaActivity.Seleccionado.setConfirmada(true);
             Departamento.buscarYConfirmarReserva(AltaReservaActivity.Seleccionado);
+            MainActivity.usuario.getReservas().add(AltaReservaActivity.Seleccionado);
             sendNotificacion(context,"Reserva Confirmada");
         }
     }
@@ -63,30 +66,22 @@ public class TestReceiver extends BroadcastReceiver{
     }
 
     private void sendNotificacion(Context context,String message){
+
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nm = (NotificationManager) context.getSystemService(ns);
 
-        ArrayList<Reserva> todasLasReservasRealizadas = new ArrayList<Reserva>();
-        for(Departamento d: Departamento.getAlojamientosDisponibles())
-            todasLasReservasRealizadas.addAll(d.getReservas());
-        ArrayList<Reserva> todasLasReservasNoConfirmada = new ArrayList<Reserva>();
-        for(Reserva a: todasLasReservasRealizadas)
-            if(!a.getConfirmada())
-                todasLasReservasNoConfirmada.add(a);
-        todasLasReservasRealizadas.removeAll(todasLasReservasNoConfirmada);
-        Log.i("Cantidad de reserva NC",todasLasReservasNoConfirmada.size()+"");
-        Log.i("Cantidad de reserva C::",todasLasReservasRealizadas.size()+"");
-
         Intent intent = new Intent(context,AltaReservaActivity.class);
-        intent.putExtra("listaReservas",(ArrayList<Reserva>) todasLasReservasRealizadas);
+        intent.putExtra("listaReservas",(ArrayList<Reserva>) MainActivity.usuario.getReservas());
         intent.putExtra("esReserva",false);
 
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         PendingIntent pi = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context.getApplicationContext())
                 .setContentIntent(pi)
                 .setContentTitle("Notificación de Reservalo.com")
                 .setSmallIcon(android.R.drawable.ic_menu_send)
-                .setContentText(message);
+                .setContentText(message)
+                .setSound(defaultSound);
         nm.notify(1,mBuilder.build());
 
     }

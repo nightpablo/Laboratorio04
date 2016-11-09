@@ -32,7 +32,7 @@ public class AltaReservaActivity extends AppCompatActivity {
     private ReservaAdapter adaptadorReserva;
     private Button botonReservar;
     private Boolean SeReserva;
-    public static Reserva Seleccionado;
+public static Reserva Seleccionado;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,8 +94,8 @@ public class AltaReservaActivity extends AppCompatActivity {
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Aquí lo que deseas realizar
-                        Toast Reservado = Toast.makeText(AltaReservaActivity.this,"La reserva está en pendiente: "+Seleccionado.getId()+"\n"+Seleccionado.getConfirmada().toString()+"\n"+Seleccionado.getFechaInicio().toString(),Toast.LENGTH_SHORT);
-                        Reservado.show();
+                        Toast.makeText(AltaReservaActivity.this,"La reserva está en pendiente: "+Seleccionado.getId()+"\n"+Seleccionado.getConfirmada().toString()+"\n"+Seleccionado.getFechaInicio().toString(),Toast.LENGTH_SHORT).show();
+
 
                         TestReceiver activarAlarma = new TestReceiver();
                         activarAlarma.sendRepeatingAlarm(AltaReservaActivity.this);
